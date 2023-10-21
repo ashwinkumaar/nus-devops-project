@@ -12,6 +12,9 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v2
 
+      - name: Create directory if it doesn't exist
+        run: mkdir -p $GITHUB_WORKSPACE/iss_data
+
       - name: Get data from API and create files
         run: |
           url="http://api.open-notify.org/iss-now.json"
@@ -20,22 +23,26 @@ jobs:
           if [ "$data" ]; then
             timestamp=$(date +'%Y-%m-%d_%H-%M-%S')
             filename_json="data_$timestamp.json"
-            filename_html="data_$timestamp.html"
-            file_path_json="$GITHUB_WORKSPACE/$filename_json"
-            file_path_html="$GITHUB_WORKSPACE/$filename_html"
+            file_path_json="$GITHUB_WORKSPACE/iss_data/$filename_json"
 
             echo "$data" > "$file_path_json"
             echo "Data successfully written to $file_path_json"
+          else
+            echo "Failed to retrieve data from the API."
+          fi
 
-            # Convert JSON to HTML
-            echo "<html><body><pre>" > "$file_path_html"
-            cat "$file_path_json" >> "$file_path_html"
-            echo "</pre></body></html>" >> "$file_path_html"
+      - name: Get data from API and create files
+        run: |
+          url="http://api.open-notify.org/iss-now.json"
+          data=$(curl -s "$url")
 
-            echo "Data successfully written to $file_path_html"
+          if [ "$data" ]; then
+            timestamp=$(date +'%Y-%m-%d_%H-%M-%S')
+            filename_json="data_$timestamp.json"
+            file_path_json="$GITHUB_WORKSPACE/iss_data/$filename_json"
 
-            # Rename HTML file to index.html
-            mv "$file_path_html" "$GITHUB_WORKSPACE/index.html"
+            echo "$data" > "$file_path_json"
+            echo "Data successfully written to $file_path_json"
           else
             echo "Failed to retrieve data from the API."
           fi
