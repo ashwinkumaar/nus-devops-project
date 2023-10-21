@@ -28,17 +28,20 @@ jobs:
             echo "Failed to retrieve data from the API."
           fi
 
+      - name: Git Auto Commit
+        uses: stefanzweifel/git-auto-commit-action@v5.0.0
+            
 
-      - name: Run the Action
-        uses: devops-infra/action-commit-push@master
-        with:
-          # github_token: "${{ secrets.GITHUB_TOKEN }}"
-          github_token: "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"
-          add_timestamp: true
-          commit_prefix: "[AUTO]"
-          commit_message: "Automatic commit"
-          force: false
-          target_branch: update/version
+      # - name: Run the Action
+      #   uses: devops-infra/action-commit-push@master
+      #   with:
+      #     # github_token: "${{ secrets.GITHUB_TOKEN }}"
+      #     github_token: "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"
+      #     add_timestamp: true
+      #     commit_prefix: "[AUTO]"
+      #     commit_message: "Automatic commit"
+      #     force: false
+      #     target_branch: update/version
       
       # - name: Commit and push changes
       #   env:
