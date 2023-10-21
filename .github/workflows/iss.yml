@@ -27,3 +27,11 @@ jobs:
           else
             echo "Failed to retrieve data from the API."
           fi
+
+      - name: Commit and push changes
+        run: |
+          git config --global user.email "actions@github.com"
+          git config --global user.name "GitHub Actions"
+          git add .
+          git commit -m "Add data file from API"
+          git push
