@@ -49,3 +49,13 @@ jobs:
 
       - name: Git Auto Commit
         uses: stefanzweifel/git-auto-commit-action@v5.0.0
+
+      - name: Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          personal_token: ${{ secrets.PERSONAL_TOKEN }}
+          publish_dir: ./
+          publish_branch: gh-pages
+          publish_repo: ashwinkumaar/nus-devops-project
+          full_commit_message: Deployed to GitHub Pages
+          cname: yourcustomdomain.com # Add your custom domain here, if applicable
