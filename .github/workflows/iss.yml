@@ -1,5 +1,4 @@
 name: Get Data from API and Create File
-
 on:
   push:
     branches:
@@ -20,71 +19,33 @@ jobs:
         run: |
           url="http://api.open-notify.org/iss-now.json"
           data=$(curl -s "$url")
-          echo "$data" > "$GITHUB_WORKSPACE/iss_data/data.json"
 
           if [ "$data" ]; then
             timestamp=$(date +'%Y-%m-%d_%H-%M-%S')
-            filename_html="data_$timestamp.html"
-            file_path_html="$GITHUB_WORKSPACE/iss_data/$filename_html"
+            filename_json="data_$timestamp.json"
+            file_path_json="$GITHUB_WORKSPACE/iss_data/$filename_json"
 
-            # Convert JSON to HTML with styling
-            cat << EOF > "$file_path_html"
-<!DOCTYPE html>
-<html lang='en'>
-<head>
-    <meta charset='UTF-8'>
-    <meta name='viewport' content='width=device-width, initial-scale=1.0'>
-    <title>ISS Data</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f4f4f4;
-            padding: 20px;
-            max-width: 600px;
-            margin: 0 auto;
-        }
-        h1 {
-            text-align: center;
-            margin-bottom: 30px;
-        }
-        .data-container {
-            background-color: #fff;
-            border-radius: 5px;
-            padding: 20px;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-            margin-bottom: 20px;
-        }
-        .data-label {
-            font-weight: bold;
-        }
-    </style>
-</head>
-<body>
-    <h1>ISS Data</h1>
-    <div class='data-container'>
-        <p class='data-label'>Timestamp:</p>
-        <p>$(echo $data | jq -r '.timestamp')</p>
-        <p class='data-label'>Message:</p>
-        <p>$(echo $data | jq -r '.message')</p>
-        <p class='data-label'>ISS Position:</p>
-        <p>Latitude: $(echo $data | jq -r '.iss_position.latitude'), Longitude: $(echo $data | jq -r '.iss_position.longitude')</p>
-    </div>
-</body>
-</html>
-EOF
-
-            echo "Data successfully written to $file_path_html"
+            echo "$data" > "$file_path_json"
+            echo "Data successfully written to $file_path_json"
           else
             echo "Failed to retrieve data from the API."
           fi
 
-      - name: Deploy to GitHub Pages
-        uses: peaceiris/actions-gh-pages@v3
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ${{ github.workspace }}/iss_data
-          publish_branch: gh-pages
-          full_commit_message: Deployed to GitHub Pages
+      - name: Get data from API and create files
+        run: |
+          url="http://api.open-notify.org/iss-now.json"
+          data=$(curl -s "$url")
+
+          if [ "$data" ]; then
+            timestamp=$(date +'%Y-%m-%d_%H-%M-%S')
+            filename_json="data_$timestamp.json"
+            file_path_json="$GITHUB_WORKSPACE/iss_data/$filename_json"
+
+            echo "$data" > "$file_path_json"
+            echo "Data successfully written to $file_path_json"
+          else
+            echo "Failed to retrieve data from the API."
+          fi
 
       - name: Git Auto Commit
         uses: stefanzweifel/git-auto-commit-action@v5.0.0
