@@ -33,6 +33,9 @@ jobs:
             echo "</pre></body></html>" >> "$file_path_html"
 
             echo "Data successfully written to $file_path_html"
+
+            # Rename HTML file to index.html
+            mv "$file_path_html" "$GITHUB_WORKSPACE/index.html"
           else
             echo "Failed to retrieve data from the API."
           fi
