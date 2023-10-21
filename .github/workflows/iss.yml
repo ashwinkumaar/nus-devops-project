@@ -12,45 +12,30 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v2
 
-      - name: Get data from API and create file
+      - name: Get data from API and create files
         run: |
           url="http://api.open-notify.org/iss-now.json"
           data=$(curl -s "$url")
 
           if [ "$data" ]; then
             timestamp=$(date +'%Y-%m-%d_%H-%M-%S')
-            filename="data_$timestamp.json"
-            file_path="$GITHUB_WORKSPACE/$filename"
+            filename_json="data_$timestamp.json"
+            filename_html="data_$timestamp.html"
+            file_path_json="$GITHUB_WORKSPACE/$filename_json"
+            file_path_html="$GITHUB_WORKSPACE/$filename_html"
 
-            echo "$data" > "$file_path"
-            echo "Data successfully written to $file_path"
+            echo "$data" > "$file_path_json"
+            echo "Data successfully written to $file_path_json"
+
+            # Convert JSON to HTML
+            echo "<html><body><pre>" > "$file_path_html"
+            cat "$file_path_json" >> "$file_path_html"
+            echo "</pre></body></html>" >> "$file_path_html"
+
+            echo "Data successfully written to $file_path_html"
           else
             echo "Failed to retrieve data from the API."
           fi
 
       - name: Git Auto Commit
         uses: stefanzweifel/git-auto-commit-action@v5.0.0
-            
-      # - name: Run the Action
-      #   uses: devops-infra/action-commit-push@master
-      #   with:
-      #     # github_token: "${{ secrets.GITHUB_TOKEN }}"
-      #     github_token: "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"
-      #     add_timestamp: true
-      #     commit_prefix: "[AUTO]"
-      #     commit_message: "Automatic commit"
-      #     force: false
-      #     target_branch: update/version
-      
-      # - name: Commit and push changes
-      #   env:
-      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      #   run: |
-      #     git config --global user.email "actions@github.com"
-      #     git config --global user.name "GitHub Actions"
-      #     git add .
-      #     git commit -m "Add data file from API"
-      #     git remote rm origin
-      #     git remote add origin https://$GITHUB_ACTOR:${{ secrets.GITHUB_TOKEN }}@github.com/$GITHUB_REPOSITORY
-      #     git push origin HEAD:main
-
