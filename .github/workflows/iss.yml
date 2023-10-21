@@ -1,0 +1,47 @@
+name: Get Data from API and Create File
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  get_data_and_create_file:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.8
+
+      - name: Install requests library
+        run: pip install requests
+
+      - name: Get data from API and create file
+        run: |
+          import requests
+          import json
+          import os
+          from datetime import datetime
+
+          url = "http://api.open-notify.org/iss-now.json"
+          response = requests.get(url)
+
+          if response.status_code == 200:
+              data = response.json()
+
+              # Generate filename with timestamp
+              timestamp = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
+              filename = f"data_{timestamp}.json"
+              file_path = os.path.join(os.environ['GITHUB_WORKSPACE'], filename)
+
+              # Write API data to the file
+              with open(file_path, "w") as file:
+                  json.dump(data, file, indent=4)
+
+              print(f"Data successfully written to {file_path}")
+          else:
+              print(f"Failed to retrieve data from the API. Status code: {response.status_code}")
