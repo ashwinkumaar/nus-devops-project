@@ -1,19 +1,18 @@
-# nus-devops-project
-nus-devops-project
+#GitHub Action Workflow Documentation: Get Data from API and Create File
 
-The workflow in the Github will do the following:
+This GitHub Action workflow retrieves data from a specified API endpoint and saves it as both a JSON file and an HTML file in the main branch of the repository.
+Workflow Steps:
 
-1. Security Analysis using CodeQL Analysis Workflow:
-Conduct a security analysis using CodeQL to detect any potential security vulnerabilities within the codebase.
+Checkout repository: Checks out the repository to provide the necessary context for subsequent operations.
 
-2. Dependency Review:
-Review project dependencies to identify and resolve any vulnerable components introduced or present within the repository.
+Get data from API and create files:
 
-3. Code Analysis and Adherence to Coding Standards:
-Perform a comprehensive code analysis to identify bugs and ensure adherence to coding standards.
-
-4. Vulnerability Scan:
-Regularly scan the project for weaknesses and vulnerabilities, using specialized tools to identify and address potential security threats.
-
-5. Code Verification and Deployment to Google GKE:
-Verify the code for compliance and quality standards, then deploy it to Google Kubernetes Engine (GKE) for scalable and managed container orchestration.
+Retrieves data from the specified API endpoint using the curl command.
+Saves the data as a JSON file and converts it into an HTML format for improved readability.
+Commits both the JSON and HTML files to the main branch automatically.
+Prerequisites:
+Ensure the designated API endpoint is accessible and provides valid JSON data.
+Verify that the stefanzweifel/git-auto-commit-action GitHub Action is configured for automated commits to the repository.
+Outcome:
+Facilitates the retrieval and storage of API data in both JSON and HTML formats for better accessibility and readability.
+Automates the process of committing the generated files to the main branch, ensuring efficient version control and management.
