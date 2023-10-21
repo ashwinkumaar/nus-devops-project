@@ -23,39 +23,69 @@ jobs:
           if [ "$data" ]; then
             timestamp=$(date +'%Y-%m-%d_%H-%M-%S')
             filename_json="data_$timestamp.json"
+            filename_html="data_$timestamp.html"
             file_path_json="$GITHUB_WORKSPACE/iss_data/$filename_json"
+            file_path_html="$GITHUB_WORKSPACE/iss_data/$filename_html"
 
             echo "$data" > "$file_path_json"
             echo "Data successfully written to $file_path_json"
+
+            # Convert JSON to HTML with styling
+            echo "<!DOCTYPE html>
+            <html lang='en'>
+            <head>
+                <meta charset='UTF-8'>
+                <meta name='viewport' content='width=device-width, initial-scale=1.0'>
+                <title>ISS Data</title>
+                <style>
+                    body {
+                        font-family: Arial, sans-serif;
+                        background-color: #f4f4f4;
+                        padding: 20px;
+                        max-width: 600px;
+                        margin: 0 auto;
+                    }
+                    h1 {
+                        text-align: center;
+                        margin-bottom: 30px;
+                    }
+                    .data-container {
+                        background-color: #fff;
+                        border-radius: 5px;
+                        padding: 20px;
+                        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+                        margin-bottom: 20px;
+                    }
+                    .data-label {
+                        font-weight: bold;
+                    }
+                </style>
+            </head>
+            <body>
+                <h1>ISS Data</h1>
+                <div class='data-container'>
+                    <p class='data-label'>Timestamp:</p>
+                    <p>${data | jq '.timestamp'}</p>
+                    <p class='data-label'>Message:</p>
+                    <p>${data | jq '.message'}</p>
+                    <p class='data-label'>ISS Position:</p>
+                    <p>Latitude: ${data | jq '.iss_position.latitude'}, Longitude: ${data | jq '.iss_position.longitude'}</p>
+                </div>
+            </body>
+            </html>" > "$file_path_html"
+
+            echo "Data successfully written to $file_path_html"
           else
             echo "Failed to retrieve data from the API."
           fi
-
-      - name: Get data from API and create files
-        run: |
-          url="http://api.open-notify.org/iss-now.json"
-          data=$(curl -s "$url")
-
-          if [ "$data" ]; then
-            timestamp=$(date +'%Y-%m-%d_%H-%M-%S')
-            filename_json="data_$timestamp.json"
-            file_path_json="$GITHUB_WORKSPACE/iss_data/$filename_json"
-
-            echo "$data" > "$file_path_json"
-            echo "Data successfully written to $file_path_json"
-          else
-            echo "Failed to retrieve data from the API."
-          fi
-
-      - name: Git Auto Commit
-        uses: stefanzweifel/git-auto-commit-action@v5.0.0
 
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v3
         with:
-          personal_token: ${{ secrets.PERSONAL_TOKEN }}
-          publish_dir: ./
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ${{ github.workspace }}/iss_data
           publish_branch: gh-pages
-          publish_repo: ashwinkumaar/nus-devops-project
           full_commit_message: Deployed to GitHub Pages
-          cname: yourcustomdomain.com # Add your custom domain here, if applicable
+
+      - name: Git Auto Commit
+        uses: stefanzweifel/git-auto-commit-action@v5.0.0
