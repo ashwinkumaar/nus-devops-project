@@ -19,19 +19,16 @@ jobs:
         run: |
           url="http://api.open-notify.org/iss-now.json"
           data=$(curl -s "$url")
+          echo "$data" > "$GITHUB_WORKSPACE/iss_data/data.json"
 
           if [ "$data" ]; then
             timestamp=$(date +'%Y-%m-%d_%H-%M-%S')
-            filename_json="data_$timestamp.json"
             filename_html="data_$timestamp.html"
-            file_path_json="$GITHUB_WORKSPACE/iss_data/$filename_json"
             file_path_html="$GITHUB_WORKSPACE/iss_data/$filename_html"
 
-            echo "$data" > "$file_path_json"
-            echo "Data successfully written to $file_path_json"
-
             # Convert JSON to HTML with styling
-            echo "<!DOCTYPE html>
+            cat << EOF > "$file_path_html"
+            <!DOCTYPE html>
             <html lang='en'>
             <head>
                 <meta charset='UTF-8'>
@@ -65,14 +62,15 @@ jobs:
                 <h1>ISS Data</h1>
                 <div class='data-container'>
                     <p class='data-label'>Timestamp:</p>
-                    <p>${data | jq '.timestamp'}</p>
+                    <p>$(echo $data | jq -r '.timestamp')</p>
                     <p class='data-label'>Message:</p>
-                    <p>${data | jq '.message'}</p>
+                    <p>$(echo $data | jq -r '.message')</p>
                     <p class='data-label'>ISS Position:</p>
-                    <p>Latitude: ${data | jq '.iss_position.latitude'}, Longitude: ${data | jq '.iss_position.longitude'}</p>
+                    <p>Latitude: $(echo $data | jq -r '.iss_position.latitude'), Longitude: $(echo $data | jq -r '.iss_position.longitude')</p>
                 </div>
             </body>
-            </html>" > "$file_path_html"
+            </html>
+EOF
 
             echo "Data successfully written to $file_path_html"
           else
