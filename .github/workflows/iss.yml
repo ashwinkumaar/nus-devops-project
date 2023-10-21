@@ -1,4 +1,5 @@
 name: Get Data from API and Create File
+
 on:
   push:
     branches:
@@ -70,7 +71,7 @@ jobs:
                 </div>
             </body>
             </html>
-EOF
+            EOF
 
             echo "Data successfully written to $file_path_html"
           else
